@@ -1,7 +1,6 @@
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from google import genai
 # python openai_compatible.py
 
 load_dotenv()
