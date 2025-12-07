@@ -52,7 +52,6 @@ def get_response(messages):
                 # 打印回复过程
                 print(delta.content, end='', flush=True)
                 response_chunks.append(delta.content)
-        # print(chunk.model_dump_json(indent=4))
     # 拼接模型的完整回复，传回主循环加入历史记忆中
     full_response = "".join(response_chunks)
     print("\n")
