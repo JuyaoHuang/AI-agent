@@ -29,7 +29,9 @@ client = OpenAI(
 # Sidebar building
 with st.sidebar:
     st.header("🎭 Choose a character")
-    selected_role = st.selectbox("Please choose an AI chatbot: ", list(system_prompts.keys()))
+    selected_role = st.selectbox(
+        "Please choose an AI chatbot: ", list(system_prompts.keys())
+    )
 
     system_prompt = system_prompts[selected_role]
 
@@ -93,7 +95,7 @@ if user_input := st.chat_input("Chat with it..."):
                 "thinking_budget": 500,
             },
             stream=True,
-            stream_options={"include_usage": True}
+            stream_options={"include_usage": True},
         )
 
         # 4. process returned chunks
@@ -103,21 +105,23 @@ if user_input := st.chat_input("Chat with it..."):
             # process message contain token used which is the last chunk
             if not chunk.choices:
                 usage = f"Consume Token: {chunk.usage.total_tokens}"
-                status_box.update(label="Thinking end.  " + usage, state="complete", expanded=False)
-                print(usage, end='', flush=True)
+                status_box.update(
+                    label="Thinking end.  " + usage, state="complete", expanded=False
+                )
+                print(usage, end="", flush=True)
             else:
                 delta = chunk.choices[0].delta
                 # process reasoning content
                 access_chunk = getattr(delta, "reasoning_content", None)
                 if access_chunk:
-                    print(access_chunk, end='', flush=True)
+                    print(access_chunk, end="", flush=True)
                     reasoning_chunks.append(access_chunk)
                     # refresh UI in real time
                     reasoning_placeholder.markdown("".join(reasoning_chunks))
 
                 # process response content
                 if delta.content:
-                    print(delta.content, end='', flush=True)
+                    print(delta.content, end="", flush=True)
                     content_chunks.append(delta.content)
                     content_placeholder.markdown("".join(content_chunks) + "▌")
 
@@ -127,9 +131,10 @@ if user_input := st.chat_input("Chat with it..."):
         # remove "▌" and show complete response content
         content_placeholder.markdown(full_content)
 
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": full_content,
-            "reasoning": full_reasoning,
-        })
-
+        st.session_state.messages.append(
+            {
+                "role": "assistant",
+                "content": full_content,
+                "reasoning": full_reasoning,
+            }
+        )

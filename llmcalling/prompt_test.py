@@ -5,6 +5,7 @@ reference:
 2. CoT
 3. 结构化输出/约束
 """
+
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -15,6 +16,7 @@ client = OpenAI(
     api_key=os.environ.get("ALIYUN_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
+
 
 def get_responses(messages):
     reasoning_content = []
@@ -28,7 +30,7 @@ def get_responses(messages):
             "thinking_budget": 500,
         },
         stream=True,
-        stream_options={"include_usage": True}
+        stream_options={"include_usage": True},
     )
     print("\n" + "=" * 30 + "思考过程" + "=" * 30 + "\n")
     response_chunk = []
@@ -205,6 +207,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
