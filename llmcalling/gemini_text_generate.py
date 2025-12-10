@@ -2,12 +2,13 @@ import os
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+
 # python gemini_text_generate.py
 load_dotenv()
 
 client = genai.Client()
 
-# response = client.models.generate_content(  
+# response = client.models.generate_content(
 #     model='gemini-2.5-pro',
 #     # use this attribute `generate_content` to control gemini
 #     config=types.GenerateContentConfig(
@@ -30,10 +31,12 @@ from google import genai
 
 # python test_yml.py
 
+
 def load_config():
-    with open('conf.yaml','r', encoding="utf-8") as f:
+    with open("conf.yaml", "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
-    
+
+
 # 加载配置
 config = load_config()
 gemini_key = config.get("GEMINI_API_KEY")
@@ -41,13 +44,8 @@ gemini_key = config.get("GEMINI_API_KEY")
 if not gemini_key:
     raise ValueError("GEMINI_API_KEY NOT FOUND.")
 
-client= genai.Client(
-    api_key=gemini_key
-)
+client = genai.Client(api_key=gemini_key)
 
-response = client.models.generate_content(
-    model="gemini-2.5-pro",
-    contents="hello"
-)
+response = client.models.generate_content(model="gemini-2.5-pro", contents="hello")
 
 print(response.text)
