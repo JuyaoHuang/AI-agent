@@ -3,3 +3,5 @@
 *.pyc
 *__pycache__
 *.yaml
+*.env
+*.ruff_cache
