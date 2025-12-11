@@ -7,17 +7,16 @@
 目的: 将LLM的强大能力，封装成你可以轻松调用的、可靠的后端服务
 """
 
-import os
+
 import json
 from fastapi import FastAPI, HTTPException
-from openai import OpenAI
-from dotenv import load_dotenv
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.docs import get_redoc_html
 from .schema import (TranslateRequest, TranslateResponse)
 from .prompt_factory import PromptFactory
+from .llmcalling import llmcalling
 
-load_dotenv()
+
 app = FastAPI(title="Atri Translator", docs_url=None, redoc_url=None)
 
 
@@ -43,12 +42,6 @@ async def redoc_html():
     )
 
 
-client = OpenAI(
-    api_key=os.environ.get("ALIYUN_API_KEY"),
-    base_url=os.environ.get("ALIYUN_BASE_URL"),
-)
-
-
 # core api
 @app.post("/api/translate", response_model=TranslateResponse)
 async def translate(request: TranslateRequest):
@@ -60,16 +53,12 @@ async def translate(request: TranslateRequest):
     try:
         system_prompt = PromptFactory.get_translate_prompt(request.target_lang)
 
-        response = client.chat.completions.create(
-            model="qwen3-max",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": request.text},
-            ],
-            temperature=0.3,
-        )
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": request.text},
+        ]
+        content = llmcalling("qwen3-max", messages, 0.3)
 
-        content = response.choices[0].message.content
         # turn json into dict
         data = json.loads(content)
 

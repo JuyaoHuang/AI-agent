@@ -36,3 +36,4 @@ class PromptFactory:
         请将文章总结在 {word_limit} 字以内。
         必须返回 JSON 格式：{{ "summary": "...", "tags": [] }}
         """
+
