@@ -10,3 +10,4 @@ class TranslateResponse(BaseModel):
     original_text: str
     translated_text: str
     detected_language: str = "unknown"
+
