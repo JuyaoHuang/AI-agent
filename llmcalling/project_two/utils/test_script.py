@@ -1,8 +1,10 @@
 import requests
 
 
+BASE_URL = 'http://127.0.0.1:8028'
+
 def translate_test(text: str, target_lang: str):
-    url = "http://127.0.0.1:8028/api/translate"
+    url = f"{BASE_URL}/api/translate"
     payload = {
         "text": text,
         "target_lang": target_lang
@@ -20,7 +22,7 @@ def translate_test(text: str, target_lang: str):
 
 
 def summary_test(text: str, word_limit: int):
-    url = "http://127.0.0.1:8028/api/summary"
+    url = f"{BASE_URL}/api/summary"
     pay_load = {
         "text": text,
         "word_limit": word_limit
