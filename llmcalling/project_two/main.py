@@ -50,7 +50,7 @@ def start_fastapi():
     uvicorn.run(
         "services.server:app",
         host="0.0.0.0",
-        port=8026,
+        port=8028,
         reload=True
     )
 
@@ -60,8 +60,8 @@ def main():
         return
 
     print("\nServer boot successful.")
-    print("API 文档地址: http://localhost:8026/docs")
-    print("ReDoc 文档地址: http://localhost:8026/redoc")
+    print("API 文档地址: http://localhost:8028/docs")
+    print("ReDoc 文档地址: http://localhost:8028/redoc")
     print("按 Ctrl+C 停止服务器\n")
 
     start_fastapi()

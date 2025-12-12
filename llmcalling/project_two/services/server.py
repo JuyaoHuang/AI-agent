@@ -9,15 +9,29 @@
 
 
 import json
+import re
 from fastapi import FastAPI, HTTPException
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.docs import get_redoc_html
-from .schema import (TranslateRequest, TranslateResponse)
 from .prompt_factory import PromptFactory
-from .llmcalling import llmcalling
+from .llmcalling import LLMCalling
+from .schema import (
+    TranslateRequest,
+    TranslateResponse,
+    SummaryRequest,
+    SummaryResponse,
+    )
 
 
 app = FastAPI(title="Atri Translator", docs_url=None, redoc_url=None)
+
+
+# 辅助函数：清洗模型可能返回的 ```json 代码块标注
+def clean_json_string(text:str) -> str:
+    """清理模型返回的可能存在的 markdown 标记:```json """
+    text = re.sub(r"```json\s*", "", text)
+    text = re.sub(r"```", "", text)
+    return text.strip()
 
 
 # Add swagger-ui mirror
@@ -42,7 +56,6 @@ async def redoc_html():
     )
 
 
-# core api
 @app.post("/api/translate", response_model=TranslateResponse)
 async def translate(request: TranslateRequest):
     """
@@ -57,7 +70,7 @@ async def translate(request: TranslateRequest):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": request.text},
         ]
-        content = llmcalling("qwen3-max", messages, 0.3)
+        content = LLMCalling.llmcalling("qwen3-max", messages, 0.3)
 
         # turn json into dict
         data = json.loads(content)
@@ -71,6 +84,25 @@ async def translate(request: TranslateRequest):
     except Exception as e:
         print(f"Error:{e}\n")
         raise HTTPException(status_code=502, detail=str(e))
+
+
+@app.post("/api/summary", response_model=SummaryResponse)
+async def summary(request: SummaryRequest):
+    """处理总结长文本请求的端点"""
+    system_prompt = PromptFactory.get_summary_prompt(250)
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": request.text},
+    ]
+    content = LLMCalling.llmcalling("qwen3-max", messages, 0.5)
+    # 清洗潜在的 json md标注
+    content = clean_json_string(content)
+    data = json.loads(content)
+
+    return SummaryResponse(
+        summary=data.get("summary", "Fail to summary"),
+        tags=data.get("tags",[])
+    )
 
 
 @app.get("/")
