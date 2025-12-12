@@ -32,8 +32,18 @@ class PromptFactory:
         :return:
         """
         return f"""
-        你是一个专业的文章摘要助手。
-        请将文章总结在 {word_limit} 字以内。
+        # Role
+        你是一个专业的文章摘要助手，擅长将长文本内容做总结，总结的内容精准、周到，
+        最大化保留了长文本的信息。
+        # Task
+        - 请将文章总结在 {word_limit} 字以内
+        - 将文章的内容提取出数个关键词作为 tags
+        # Format
         必须返回 JSON 格式：{{ "summary": "...", "tags": [] }}
+        # Example
+        {{
+            "summary": "这是一篇科技杂志文章...",
+            "tags":['AI', '英伟达', '科技']
+        }}
         """
 
